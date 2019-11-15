@@ -8,14 +8,16 @@ HOST = '127.0.0.1'
 
 print_lock = threading.Lock()
 
-def threaded(connection):
+def threaded(connection, address):
     while True:
         data = connection.recv(1024)
         if not data:
-            print_lock.release()
             break
         result = bank.BankHandler().call_to_bank(data)
         connection.send(result)
+        print_lock.acquire()
+        print "The payment server is sent data to ", address[0], ":", address[1]
+        print_lock.release()
     connection.close()
 
 def Main():
@@ -28,7 +30,8 @@ def Main():
             (connection, address) = payment_socket.accept()
             print_lock.acquire()
             print "The payment server is connected to ", address[0], ":", address[1]
-            thread.start_new_thread(threaded, (connection,))
+            print_lock.release()
+            thread.start_new_thread(threaded, (connection, address))
         payment_socket.close()
     except KeyboardInterrupt:
         payment_socket.close()
