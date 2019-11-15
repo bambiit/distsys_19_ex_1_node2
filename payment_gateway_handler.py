@@ -1,28 +1,37 @@
-from BaseHTTPServer import BaseHTTPRequestHandler
-import urlparse
+import socket
+import thread
+import threading
+import bank
 
+PORT = 8002
+HOST = '127.0.0.1'
 
-class paymentGatewayHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
+print_lock = threading.Lock()
 
-        parsePath = urlparse.urlparse(self.path)
-        query = parsePath.query
-        self.wfile.write("***** From Payment Gateway *****\n")
-        self.wfile.write("***** Calling to Bank *****\n")
+def threaded(connection):
+    while True:
+        data = connection.recv(1024)
+        if not data:
+            print_lock.release()
+            break
+        result = bank.BankHandler().call_to_bank(data)
+        connection.send(result)
+    connection.close()
 
-        amount = urlparse.parse_qs(query)['amount']
-        result = self.call_to_bank(int(amount[0]))
+def Main():
+    try:
+        payment_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        payment_socket.bind((HOST, PORT))
+        payment_socket.listen(1)
+        print "The payment server is listening"
+        while True:
+            (connection, address) = payment_socket.accept()
+            print_lock.acquire()
+            print "The payment server is connected to ", address[0], ":", address[1]
+            thread.start_new_thread(threaded, (connection,))
+        payment_socket.close()
+    except KeyboardInterrupt:
+        payment_socket.close()
 
-        paymentResultText = "***** The Payment is " + result + " *****\n"
-        self.wfile.write(paymentResultText)
-        return
-
-    def call_to_bank(self, amount):                                                               
-        if amount < 100:
-            return "NOT OK"
-        else:
-            return "OK"
-
+if __name__ == '__main__':
+    Main()
