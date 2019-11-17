@@ -2,22 +2,26 @@ import threading
 import time
 
 print_lock = threading.Lock()
+OK = 1
+NOK = 0
+
 
 class BankHandler:
 
     def __init__(self):
         pass
 
-    def call_to_bank(self, data):
+    def call_to_bank(self, amount):
         print_lock.acquire()
-        print "Call to Bank"
+        print("Call to Bank")
         print_lock.release()
-        time.sleep(10)
+        time.sleep(5)
+
         try:
-            amount = int(data)
+            amount = int(amount)
             if amount < 100:
-                return "NOT OK"
+                return NOK
             else:
-                return "OK"
+                return OK
         except ValueError:
-            return "NOT OK"
+            return NOK
