@@ -12,7 +12,11 @@ def connect_to_payment_server(call_no):
     try:
         client_socket.settimeout(10)
         client_socket.connect((HOST, PORT))
-        client_socket.send(str(randrange(200)))
+        # client_socket.send(str(randrange(200)))
+        bank_account = randrange(1000000000000000000000000, 2000000000000000000000000)
+        amount = randrange(200)
+        name = "AAAAABBBBBCCCCC"
+        client_socket.sendall(str.encode("\n".join([str(bank_account), str(amount), name])))
         print("Connected to server ", call_no)
         data = client_socket.recv(1024)
         print "Received from server: ", data
