@@ -32,7 +32,7 @@ def threaded(connection, data, address):
 def return_to_client(is_ok):
     if is_ok:
         return "OK"
-    return "NOT OK"
+    return "NOT ENOUGH MONEY IN THE BANK ACCOUNT"
 
 
 def main():
