@@ -16,6 +16,9 @@ def threaded(connection, data, address):
     try:
         while True:
             bank_account, amount, name = data.decode('utf-8').split('\n')
+            print bank_account
+            print amount
+            print name
             if not amount or not bank_account or not name:
                 connection.close()
                 return return_to_client(NOK)
@@ -25,6 +28,7 @@ def threaded(connection, data, address):
             print("The payment server is sent data to ", address[0], ":", address[1])
             print_lock.release()
             connection.close()
+            thread.exit()
     except Exception as err:
         print("There is an error ", err)
         connection.close()
