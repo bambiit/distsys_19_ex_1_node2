@@ -15,10 +15,8 @@ print_lock = threading.Lock()
 def threaded(connection, data, address):
     try:
         while True:
+            # Split the data with '\n'
             bank_account, amount, name = data.decode('utf-8').split('\n')
-            print bank_account
-            print amount
-            print name
             if not amount or not bank_account or not name:
                 connection.close()
                 return return_to_client(NOK)
@@ -28,6 +26,7 @@ def threaded(connection, data, address):
             print("The payment server is sent data to ", address[0], ":", address[1])
             print_lock.release()
             connection.close()
+            # Kill the thread after finished
             thread.exit()
     except Exception as err:
         print("There is an error ", err)
@@ -47,6 +46,7 @@ def main():
         payment_socket.listen(1024)
         print("The payment server is listening")
         while True:
+            # accept the connection from Node 1
             (connection, address) = payment_socket.accept()
             data = connection.recv(1024)
             if not data:
@@ -55,6 +55,7 @@ def main():
             print_lock.acquire()
             print("The payment server is connected to ", address[0], ":", address[1])
             print_lock.release()
+            # start a new thread when receive a new connection
             thread.start_new_thread(threaded, (connection, data, address))
         payment_socket.close()
     except KeyboardInterrupt:
