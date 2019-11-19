@@ -15,7 +15,7 @@ def threaded(connection, data, address):
     try:
         while True:
             # Split the data with '\n'
-            bank_account, amount, name = data.decode('utf-8').split('\n')
+            bank_account, amount, name = data.decode().split('\n')
             if not amount or not bank_account or not name:
                 connection.close()
                 return return_to_client(NOK)
