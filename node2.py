@@ -2,7 +2,6 @@ import socket
 import thread
 import threading
 import bank
-import traceback
 
 PORT = 8002
 HOST = ''
