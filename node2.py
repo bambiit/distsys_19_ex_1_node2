@@ -5,7 +5,7 @@ import bank
 import traceback
 
 PORT = 8002
-HOST = '127.0.0.1'
+HOST = ''
 NOK = 0
 OK = 1
 

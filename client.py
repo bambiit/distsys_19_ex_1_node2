@@ -3,7 +3,7 @@ from random import randrange
 from multiprocessing import Pool
 from contextlib import closing
 
-HOST = '127.0.0.1'
+HOST = ''
 PORT = 8002
 
 
